@@ -1,80 +1,112 @@
+# WeatherTrainer
 
-# CLAUDE.md
+ClaudeCodeと学ぶ予報士試験2025
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+気象予報士試験の個人学習管理システム
 
-## リポジトリ概要
+## 概要
 
-これは気象予報士試験の個人学習用リポジトリです。以下の内容が含まれています：
+WeatherTrainerは気象予報士試験の効率的な学習をサポートするツールセットです。PDFからの問題・図版抽出、Excelによる学習管理、Claudeを活用した解説作成を行います。
 
-- 過去問題集とその解答（0 過去問zip/, 過去問一般/, 過去問実技/, 過去問専門/）
-- 学習進捗を追跡するExcelファイルとGoogleスプレッドシート
-- 参考資料と気象現象の記録
-- PDFから問題を抽出するPython OCRスクリプト
+## 主な機能
 
-## 主要コマンド
+### 📚 学習管理
+- 過去問題の体系的な整理・管理
+- Excelによる学習進捗とスコアの追跡
+- 問題解説の記録・蓄積
 
-### OCR問題抽出スクリプトの実行
+### 🔍 PDF問題抽出
+PDFから直接問題文を読み取り・抽出
 ```bash
-python ocr_question_extractor.py <問題番号> [PDFファイルパス]
+# PDFから直接問題を読み取り
+python read_pdf.py 過去問一般/i63gakka(ippan).pdf -s 1 -e 5
+
+# 特定ページの内容を表示
+python read_pdf.py 過去問一般/i63gakka(ippan).pdf -s 3 -e 3 -m 2000
 ```
 
-実行例：
+### 🖼️ 図版抽出
+PDFから問題に関連する画像・図表を自動抽出
 ```bash
-# デフォルトPDFから問13を抽出
-python ocr_question_extractor.py 13
+python extract_pdf_images.py
+```
 
-# 特定のPDFから問5を抽出
+### 📊 Excel連携
+- 学習記録の読み書き
+- 成績データの管理・分析
+- 間違った問題の特定
+
+### 🤖 Claude解説生成
+- 間違った問題をClaudeに提示
+- 文字起こしと詳細解説の作成
+- 理解を深めるための対話的学習
+
+## ディレクトリ構成
+
+```
+WeatherTrainer/
+├── 問題解説/                    # 問題別解説マークダウン
+├── 気象予報士_学科一般_解答記録.md # 学習記録
+├── read_pdf.py                  # PDF直接読み取りツール（メイン）
+├── extract_pdf_images.py        # PDF図版抽出
+├── read_xlsx.py                 # Excel読み取りツール
+├── ocr_question_extractor.py    # OCR問題抽出（レガシー・参考用）
+└── CLAUDE.md                    # Claude Code設定
+```
+
+## 使用方法
+
+### 1. PDF問題抽出（メイン手法）
+```bash
+# PDFファイル全体を読み取り
+python read_pdf.py 過去問一般/i63gakka(ippan).pdf
+
+# 特定ページ範囲を読み取り
+python read_pdf.py 過去問一般/i63gakka(ippan).pdf -s 1 -e 5
+
+# 表示文字数を制限
+python read_pdf.py 過去問一般/i63gakka(ippan).pdf -s 3 -e 3 -m 2000
+```
+
+### 2. 図版抽出
+```bash
+python extract_pdf_images.py
+```
+
+### 3. Excel学習記録管理
+```bash
+python read_xlsx.py  # 学習データの読み取り・分析
+```
+
+### 4. Claude解説作成
+1. Excelから間違った問題を特定
+2. `read_pdf.py`で問題文を抽出
+3. 問題文と図版をClaudeに提示
+4. 文字起こしと解説を依頼
+5. 解説を`問題解説/`フォルダに保存
+
+### レガシー機能（参考）
+```bash
+# OCR版問題抽出（現在は使用していない）
+python ocr_question_extractor.py 13
 python ocr_question_extractor.py 5 過去問一般/i62gakka(ippan).pdf
 ```
 
-## ディレクトリ構造
+## 学習の流れ
 
-- **0 申請用紙/**: 試験申込書類と関連文書
-- **0 過去問zip/**: 試験回別の過去問アーカイブ（cwfe_XX_zフォルダ）
-- **過去問一般/**: 学科一般の過去問と学習資料
-- **過去問実技/**: 実技試験の過去問と演習資料
-- **過去問専門/**: 学科専門の過去問
-- **実地、印象的だった気象現象/**: 注目すべき気象現象の記録
-- **気象予報士試験問題集/**: 問題集と参考資料
-- **tmp_imgs/**: 画像処理用一時ファイル
+1. **問題抽出**: PDFから直接問題と図版を抽出
+2. **解答実行**: 問題を解いてExcelに記録
+3. **間違い分析**: Excelで間違った問題を特定
+4. **Claude解説**: 間違った問題をClaudeに提示して解説作成
+5. **復習管理**: 解説を参考に理解を深め、再挑戦
 
-## 主要ファイル
+## 技術要件
 
-- `ocr_question_extractor.py`: PDF試験問題からOCRで特定問題を抽出するPythonスクリプト
-- `※気象予報士試験.code-workspace`: VS Codeワークスペース設定
-- 複数のExcelファイル: 学習進捗とスコア管理用
-- `i63gakka(ippan)_visual_elements.json`: 試験問題のOCR処理結果
-
-## アーキテクチャ
-
-### OCR問題抽出スクリプト
-メインスクリプト（`ocr_question_extractor.py`）は`C:\Users\yuuji\app_pdfocr`にある外部OCRモジュールに依存。機能：
-
-1. DocumentAI OCRを使用してPDF試験問題からテキスト抽出
-2. 複数パターン（問X, 問 X, 問XXなど）で特定問題番号を検索
-3. 次の問題が見つかるまで問題文を抽出（最大30行）
-4. 対象が見つからない場合は利用可能な問題番号を表示
-
-### ファイル組織
-以下の構造化されたアプローチに従う：
-- 試験回と種類別に整理された過去問
-- 科目別に分離された学習資料
-- Excelスプレッドシートによる進捗追跡
-- 分析用に別途保存された視覚要素と画像
-
-## 依存関係
-
-OCRスクリプトの要件：
 - Python 3.x
-- `C:\Users\yuuji\app_pdfocr`の外部OCRツールモジュール
-- PDF文字抽出用DocumentAIOCRクラス
+- PyMuPDF または PyPDF2（PDF読み取り用）
+- Excel操作機能
+- Claude Code（解説作成用）
 
-## 使用パターン
+## ライセンス
 
-このリポジトリは主に以下の用途で使用：
-1. 各科目の過去問学習
-2. 集中学習用PDF問題の抽出
-3. 学習進捗とスコアの追跡
-4. 気象現象と天気パターンの分析
-5. トピックと試験回別の参考資料整理
+個人学習用。過去問等の著作権に配慮した利用をお願いします。
