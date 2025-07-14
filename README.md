@@ -1,5 +1,7 @@
 # WeatherTrainer
 
+ClaudeCodeと学ぶ予報士試験2025
+
 気象予報士試験の個人学習管理システム
 
 ## 概要
