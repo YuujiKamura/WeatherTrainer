@@ -39,12 +39,12 @@ def extract_page_as_image(pdf_path, page_num, output_dir="extracted_images", dpi
         # ページを画像として取得
         pix = page.get_pixmap(matrix=mat)
         
-        # 出力ディレクトリを作成
-        output_path = Path(output_dir)
-        output_path.mkdir(exist_ok=True)
+        # PDF名でサブフォルダを作成
+        pdf_name = Path(pdf_path).stem
+        output_path = Path(output_dir) / pdf_name
+        output_path.mkdir(parents=True, exist_ok=True)
         
         # ファイル名を生成
-        pdf_name = Path(pdf_path).stem
         image_file = output_path / f"{pdf_name}_page{page_num}.png"
         
         # 画像を保存
